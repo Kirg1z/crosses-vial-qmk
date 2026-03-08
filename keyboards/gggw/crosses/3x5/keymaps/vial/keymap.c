@@ -215,7 +215,7 @@ bool oled_task_user(void) {
     // clang-format off
     const char* layer_names[] = {
         [_BASE]  = "BASE  CPI: ",
-        [_NUM]   = "PROG  CPI: ",
+        [_NUM]   = "NUMB  CPI: ",
         [_NAV]   = "NAVI  CPI: ",
         [_MEDIA] = "MEDIA CPI: ",
         [_FUNC]  = "FUNC  CPI: ",
