@@ -1,30 +1,35 @@
-"customKeycodes": [
-    {
-        "name": "M-Inc",
-        "title": "Increase Mouse CPI",
-        "shortName": "C_MINC"
-    },
-    {
-        "name": "M-Decrease",
-        "title": "Decrease Mouse CPI",
-        "shortName": "C_MDEC"
-    },
-    {
-        "name": "M-Togg",
-        "title": "Toggle auto mouse",
-        "shortName": "C_MTOGG"
-    },
-    {
-        "name": "M-Drag",
-        "title": "Drag scroll mode",
-        "shortName": "C_DRAG"
-    },
-    {
-        "name": "M-DragHold",
-        "title": "Scroll while held",
-        "shortName": "C_DRGH"
-    }
-],
+{
+    "name": "Crosses 3x5",
+    "productId": "0x5647",
+    "vendorId": "0x3034",
+    "lighting": "none",
+    "customKeycodes": [
+        {
+            "name": "M-Inc",
+            "title": "Increase Mouse CPI",
+            "shortName": "C_MINC"
+        },
+        {
+            "name": "M-Decrease",
+            "title": "Decrease Mouse CPI",
+            "shortName": "C_MDEC"
+        },
+        {
+            "name": "M-Togg",
+            "title": "Toggle auto mouse",
+            "shortName": "C_MTOGG"
+        },
+        {
+            "name": "M-Drag",
+            "title": "Drag scroll mode",
+            "shortName": "C_DRAG"
+        },
+        {
+            "name": "M-DragHold",
+            "title": "Scroll while held",
+            "shortName": "C_DRGH"
+        }
+    ],
     "matrix": {
         "rows": 8,
         "cols": 5
