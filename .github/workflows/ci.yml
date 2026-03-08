@@ -38,3 +38,12 @@ jobs:
       run: |
         git config --global --add safe.directory $(pwd)
         qmk compile -kb gggw/crosses/3x5/rev1 -km vial
+
+    - name: Upload firmware
+      uses: actions/upload-artifact@v4
+      with:
+        name: crosses_3x5_firmware
+        path: |
+          *.uf2
+          *.hex
+          *.bin
