@@ -11,7 +11,7 @@
 
 enum CROSSES_LAYERS { _BASE, _NUM, _NAV, _MEDIA, _FUNC, _MOUS, _CUST };
 
-enum crosses_keycode { C_MINC = QK_KB_0, C_MDEC, C_MTOGG, C_DRAG };
+enum crosses_keycode { C_MINC = QK_KB_0, C_MDEC, C_MTOGG, C_DRAG, C_DRAG_HOLD };
 
 /*
  * Keymaps!
@@ -173,12 +173,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 return false;
             }
             break;
-        case C_DRAG:
-            if (record->event.pressed) {
-                set_scrolling = record->event.pressed;
-                return true;
-            }
-            break;
+        // Кнопка-TOGGLE: нажал — скролл включился, нажал ещё раз — выключился
+case C_DRAG:
+    if (record->event.pressed) {
+        set_scrolling = !set_scrolling;  // переключаем: true→false, false→true
+    }
+    return false;
+
+// Кнопка-HOLD: зажал — скролл, отпустил — курсор
+case C_DRAG_HOLD:
+    if (record->event.pressed) {
+        set_scrolling = true;   // нажал — включили скролл
+    } else {
+        set_scrolling = false;  // отпустил — выключили скролл
+    }
+    return false;
     }
 
     return true;
