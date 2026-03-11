@@ -182,12 +182,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         // Кнопка-HOLD: зажал — скролл, отпустил — курсор
         case C_DRAG_HOLD:
-            if (record->event.pressed) {
-                set_scrolling = true;
-            } else {
-                set_scrolling = false;
-            }
-            return false;
+            set_scrolling = record->event.pressed;
+            return true;
+    break;
+
     }
 
     return true;
