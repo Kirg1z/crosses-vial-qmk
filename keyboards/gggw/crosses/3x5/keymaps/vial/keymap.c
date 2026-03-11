@@ -173,14 +173,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 return false;
             }
             break;
-        // Кнопка-TOGGLE: нажал — скролл включился, нажал ещё раз — выключился
+        // Кнопка-TOGGLE
         case C_DRAG:
             if (record->event.pressed) {
                 set_scrolling = !set_scrolling;
+                return true;
             }
-            return false;
+            break;
 
-        // Кнопка-HOLD: зажал — скролл, отпустил — курсор
+        // Кнопка-HOLD
         case C_DRAG_HOLD:
             set_scrolling = record->event.pressed;
             return true;
