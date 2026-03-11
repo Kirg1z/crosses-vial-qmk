@@ -14,7 +14,7 @@
  */
 // Using a single trackball on the right hand side
 // START_RIGHT
-// #define POINTING_DEVICE_RIGHT
+#define POINTING_DEVICE_RIGHT
 // END_RIGHT
 
 // Using a sinble trackball on the left hand side
@@ -24,7 +24,7 @@
 
 // Rocking dual trackballs!
 // START_DUAL
-#define POINTING_DEVICE_COMBINED
+// #define POINTING_DEVICE_COMBINED
 // END DUAL
 #ifdef POINTING_DEVICE_COMBINED
 #    define POINTING_DEVICE_INVERT_Y_RIGHT
