@@ -37,7 +37,7 @@ jobs:
     - name: Build
       run: |
         git config --global --add safe.directory $(pwd)
-        qmk compile -kb gggw/crosses/3x5/rev1 -km vial
+        qmk compile -kb gggw/crosses/3x5/rev2 -km vial
 
     - name: Upload firmware
       uses: actions/upload-artifact@v4
