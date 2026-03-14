@@ -217,14 +217,11 @@ static void animate_cat(uint32_t interval) {
 }
 
 
-// ЭТУ ФУНКЦИЮ ОСТАВЛЯЕМ, НО УБИРАЕМ static — ЧТОБЫ keymap.c МОГ ЕЁ ВЫЗВАТЬ
 void render_bongocat(void) {
     static uint16_t frame_timer = 0;
     uint32_t  const input_timer = last_matrix_activity_time();
 
-    if (timer_elapsed32(input_timer) > OLED_TIMEOUT) {
-        oled_off();
-    } else if (timer_elapsed(frame_timer) > FRAME_DURATION) {
+    if (timer_elapsed(frame_timer) > FRAME_DURATION) {
         frame_timer = timer_read();
         animate_cat(timer_elapsed32(input_timer));
     }
