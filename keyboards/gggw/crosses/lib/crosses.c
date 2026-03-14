@@ -33,6 +33,15 @@ const uint16_t MIN_DEFAULT_DPI = 200;
 const uint16_t MAX_DEFAULT_DPI = 10000;
 
 /***********************************************************************
+ * Sync data
+ ***********************************************************************/
+
+typedef struct {
+    global_user_config_t config;
+    bool                 scrolling;
+} crosses_sync_data_t;
+
+/***********************************************************************
  * Pointer Stroage
  ***********************************************************************/
 
@@ -126,19 +135,15 @@ void eeconfig_init_user(void) {
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     if (set_scrolling) {
-        // Calculate and accumulate scroll values based on mouse movement and divisors
         scroll_acc_h += (float)mouse_report.x / SCROLL_DIVISOR_H;
         scroll_acc_v += (float)mouse_report.y / SCROLL_DIVISOR_V;
 
-        // Assign integer parts of accumulated scroll values to the mouse report
         mouse_report.h = (int16_t)scroll_acc_h;
         mouse_report.v = (int16_t)scroll_acc_v;
 
-        // Update accumulated scroll values by subtracting the integer parts
         scroll_acc_h -= (int16_t)scroll_acc_h;
         scroll_acc_v -= (int16_t)scroll_acc_v;
 
-        // Clear the X and Y values of the mouse report
         mouse_report.x = 0;
         mouse_report.y = 0;
     }
@@ -155,19 +160,15 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 #ifdef POINTING_DEVICE_COMBINED
 
 report_mouse_t pointing_device_task_combined_user(report_mouse_t left_report, report_mouse_t right_report) {
-    // Calculate and accumulate scroll values based on mouse movement and divisors
     scroll_acc_h += (float)left_report.x / SCROLL_DIVISOR_H;
     scroll_acc_v += (float)left_report.y / SCROLL_DIVISOR_V;
 
-    // Assign integer parts of accumulated scroll values to the mouse report
     left_report.h = (int16_t)scroll_acc_h;
     left_report.v = (int16_t)scroll_acc_v;
 
-    // Update accumulated scroll values by subtracting the integer parts
     scroll_acc_h -= (int16_t)scroll_acc_h;
     scroll_acc_v -= (int16_t)scroll_acc_v;
 
-    // Clear the X and Y values of the mouse report
     left_report.x = 0;
     left_report.y = 0;
 
@@ -181,28 +182,35 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 }
 
 void secondary_sync_handler(uint8_t in_buflen, const void* in_data, uint8_t out_buflen, void* out_data) {
-    if (in_buflen == sizeof(global_user_config)) {
-        memcpy(&global_user_config, in_data, sizeof(global_user_config));
+    if (in_buflen == sizeof(crosses_sync_data_t)) {
+        const crosses_sync_data_t* sync = (const crosses_sync_data_t*)in_data;
+        memcpy(&global_user_config, &sync->config, sizeof(global_user_config));
+        set_scrolling = sync->scrolling;
     }
 }
 
 void housekeeping_task_kb(void) {
     if (!is_keyboard_master()) { return; }
 
-    static global_user_config_t last_config = {0};
+    static crosses_sync_data_t last_sync_data = {0};
     static uint32_t last_sync = 0;
     bool should_sync = false;
 
-    if (memcmp(&global_user_config, &last_config, sizeof(global_user_config))) {
+    crosses_sync_data_t current = {
+        .config    = global_user_config,
+        .scrolling = set_scrolling,
+    };
+
+    if (memcmp(&current, &last_sync_data, sizeof(current))) {
         should_sync = true;
-        memcpy(&last_config, &global_user_config, sizeof(global_user_config));
+        memcpy(&last_sync_data, &current, sizeof(current));
     }
 
-    should_sync =  (timer_elapsed32(last_sync) > 500);
+    should_sync = (timer_elapsed32(last_sync) > 500);
 
     if (!should_sync) { return; }
 
-    if (transaction_rpc_send(CROSSES_SECONDARY_SYNC_ID, sizeof(global_user_config), &global_user_config)) {
+    if (transaction_rpc_send(CROSSES_SECONDARY_SYNC_ID, sizeof(current), &current)) {
         last_sync = timer_read32();
     }
 }
