@@ -23,7 +23,7 @@ jobs:
       run: python3 util/ci_vial_verify_uid.py
 
   build-vial:
-    name: Build Charybdis 3x5 Vial
+    name: Build Crosses 3x5 Vial
     runs-on: ubuntu-latest
     container: ghcr.io/qmk/qmk_cli@sha256:16c4916e95b99bf88d27b15aec8db409ee17265d1710287fde248c6666508966
 
@@ -37,12 +37,12 @@ jobs:
     - name: Build
       run: |
         git config --global --add safe.directory $(pwd)
-        qmk compile -kb bastardkb/charybdis/3x5/v2/splinky_3 -km vial
+        qmk compile -kb gggw/crosses/3x5/rev1 -km vial
 
     - name: Upload firmware
       uses: actions/upload-artifact@v4
       with:
-        name: charybdis_3x5_firmware
+        name: crosses_3x5_custom
         path: |
           *.uf2
           *.hex
