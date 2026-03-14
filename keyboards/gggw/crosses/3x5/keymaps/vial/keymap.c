@@ -194,25 +194,71 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
 #ifdef OLED_ENABLE
 
-// Объявляем функцию из oled-bongocat.c
 extern void render_bongocat(void);
 
+#define SPLASH_DURATION 3000
+
+static bool     splash_done  = false;
+static uint32_t splash_timer = 0;
+
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
+    splash_timer = timer_read32();
+
     if (!is_keyboard_master()) {
         return OLED_ROTATION_180;
     }
     return rotation;
 }
 
+static void render_splash(void) {
+    static bool     initialized    = false;
+    static uint16_t fade_timer     = 0;
+    static uint16_t step           = 0;
+
+    if (!initialized) {
+        // Первый кадр — весь экран белый
+        for (uint16_t i = 0; i < 512; i++) {
+            oled_write_raw_byte(0xFF, i);
+        }
+        initialized = true;
+        fade_timer  = timer_read();
+        return;
+    }
+
+    // Постепенно убираем пиксели
+    if (timer_elapsed(fade_timer) > 30) {
+        fade_timer = timer_read();
+
+        for (uint8_t i = 0; i < 30; i++) {
+            uint16_t pos = (step * 137 + 83) % 512;
+            oled_write_raw_byte(0x00, pos);
+            step++;
+        }
+    }
+
+    // Надпись поверх
+    oled_set_cursor(3, 1);
+    oled_write_P(PSTR("CROSSES 3x5"), false);
+}
+
 bool oled_task_user(void) {
-    // Bongocat на обеих половинках
+    // Заставка при запуске
+    if (!splash_done) {
+        if (timer_elapsed32(splash_timer) < SPLASH_DURATION) {
+            render_splash();
+            return false;
+        } else {
+            splash_done = true;
+            oled_clear();
+        }
+    }
+
+    // Bongocat
     render_bongocat();
 
-    // Левая половинка: кот слева, текст справа (колонка 17)
-    // Правая половинка: кот справа, текст слева (колонка 0)
+    // Текст
     uint8_t col = is_keyboard_left() ? 17 : 0;
 
-    // Строка 0: Слой
     const char* layer_names[] = {
         [_BASE]  = "BASE",
         [_NUM]   = "NUMB",
@@ -225,14 +271,12 @@ bool oled_task_user(void) {
     oled_set_cursor(col, 0);
     oled_write(layer_names[get_highest_layer(layer_state)], false);
 
-    // Строка 1: CPI
     oled_set_cursor(col, 1);
     char cpi_str[6];
     uint16_t current_dpi = get_pointer_dpi(&global_user_config);
     snprintf(cpi_str, sizeof(cpi_str), "%u", (unsigned int)current_dpi);
     oled_write(cpi_str, false);
 
-    // Строка 2: Статус скролла
     oled_set_cursor(col, 2);
     if (set_scrolling) {
         oled_write_P(PSTR("SCRL"), false);
@@ -244,8 +288,3 @@ bool oled_task_user(void) {
 }
 
 #endif /* ifdef OLED_ENABLE */
-
-void pointing_device_init_user(void) {
-    set_auto_mouse_layer(_MOUS);
-    set_auto_mouse_enable(false);
-}
