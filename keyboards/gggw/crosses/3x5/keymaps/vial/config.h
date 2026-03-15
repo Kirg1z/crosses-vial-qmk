@@ -9,11 +9,6 @@
 #define VIAL_UNLOCK_COMBO_COLS {0, 0}
 #define VIAL_UNLOCK_COMBO_ROWS {0, 4}
 
-/* USB и Split fix */
-#define SPLIT_USB_DETECT
-#define SPLIT_USB_TIMEOUT 2000
-#define USB_WAIT_FOR_ENUMERATION
-
 /* Miryoku */
 #define BILATERAL_COMBINATIONS
 #define BILATERAL_COMBINATIONS_LIMIT_CHORD_TO_N_KEYS 4 /* GUI, Alt, Ctrl, Shift */
