@@ -288,3 +288,12 @@ bool oled_task_user(void) {
 }
 
 #endif /* ifdef OLED_ENABLE */
+
+void keyboard_pre_init_user(void) {
+    wait_ms(5000);
+}
+
+void pointing_device_init_user(void) {
+    set_auto_mouse_layer(_MOUS);
+    set_auto_mouse_enable(false);
+}
