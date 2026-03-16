@@ -288,7 +288,3 @@ bool oled_task_user(void) {
 }
 
 #endif /* ifdef OLED_ENABLE */
-
-    set_auto_mouse_layer(_MOUS);
-    set_auto_mouse_enable(false);
-}
